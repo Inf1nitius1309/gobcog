@@ -3,9 +3,12 @@
 		"locastan",
 		"aikaterna",
 		"TrustyJAID",
-		"Draper"
+		"Draper",
+		"Legend Gaming (Nevus)",
+		"Yuuki2628",
+		"Inf1nitius_1309"
 	],
-	"description": "An RPG for Discord.",
+	"description": "An RPG for Discord. This is a fork for the Legend Gaming Discord Server.",
     "install_msg": "Thank you for installing the Adventure cog, based on the GoblinsComic Adventure Party cog by locastan. Use `[p]load adventure` to get started and check out `[p]help Adventure`.",
     "min_python_version": [3, 8, 1],
 	"min_bot_version": "3.4.0",

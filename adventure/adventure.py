@@ -82,7 +82,7 @@ _config: Config = None
 TaxesConverter = get_dict_converter(delims=[" ", ",", ";"])
 
 # Added
-deposit_allowed = [374596069989810176, 580455191376166943]
+deposit_allowed = [295275466703503372, 517293178873970711]
 
 
 async def smart_embed(ctx, message, success=None, image=None):
@@ -177,8 +177,7 @@ class AdventureResults:
         :returns: Dict with stat_type, min_stat and max_stat.
         """
         # how much % to increase damage for solo raiders so that they
-        # can't just solo every monster based on their own average
-        # damage
+        # can't just solo every monster based on their own average damage
         if ctx.guild.id not in self._last_raids:
             self._last_raids[ctx.guild.id] = []
         SOLO_RAID_SCALE = 0.25
@@ -222,9 +221,9 @@ class AdventureResults:
             win_percent = num_wins / raid_count
             min_stat = avg_amount * 0.75
             max_stat = avg_amount * 2
-            # want win % to be at least 50%, even when solo
+            # want win % to be at least 40%, even when solo
             # if win % is below 50%, scale back min/max for easier mons
-            if win_percent < 0.5:
+            if win_percent < 0.4:
                 min_stat = avg_amount * win_percent
                 max_stat = avg_amount * 1.5
 
@@ -249,7 +248,7 @@ class Adventure(commands.Cog):
             user_id
         ).clear()  # This will only ever touch the separate currency, leaving bot economy to be handled by core.
 
-    __version__ = "3.4.3.2"
+    __version__ = "4.0.0"
 
     def __init__(self, bot: Red):
         self.bot = bot
@@ -939,7 +938,7 @@ class Adventure(commands.Cog):
             return await smart_embed(
                 ctx, _("You tried to disassemble an item but the monster ahead of you commands your attention."),
             )
-        query.pop("degrade", None)  # Disallow selling by degrade levels
+        # query.pop("degrade", None)  # Disallow selling by degrade levels
         async with self.get_lock(ctx.author):
             try:
                 character = await Character.from_json(self.config, ctx.author, self._daily_bonus)
@@ -1338,9 +1337,7 @@ class Adventure(commands.Cog):
             await self.config.user(ctx.author).set(await character.to_json(self.config))
             return await smart_embed(
                 ctx,
-                _("You attempted to disassemble multiple items: {succ} were successful and {fail} failed.").format(
-                    succ=humanize_number(success), fail=humanize_number(failed)
-                ),
+                _(f"You attempted to disassemble multiple items: {humanize_number(success)} were successful and {humanize_number(failed)} failed."),
             )
 
     @_backpack.command(name="sellall")
@@ -1358,23 +1355,21 @@ class Adventure(commands.Cog):
             rarity = rarity.lower()
             if rarity not in RARITIES:
                 return await smart_embed(
-                    ctx, _("{} is not a valid rarity, select one of {}").format(rarity, humanize_list(RARITIES)),
+                    ctx, _(f"{rarity} is not a valid rarity, select one of {humanize_list(RARITIES)}"),
                 )
             if rarity.lower() in ["forged"]:
-                return await smart_embed(ctx, _("You cannot sell `{rarity}` rarity items.").format(rarity=rarity))
+                return await smart_embed(ctx, _(f"You cannot sell `{rarity}` rarity items."))
         if slot:
             slot = slot.lower()
             if slot not in ORDER:
                 return await smart_embed(
-                    ctx, _("{} is not a valid slot, select one of {}").format(slot, humanize_list(ORDER)),
+                    ctx, _(f"{slot} is not a valid slot, select one of {humanize_list(ORDER)}"),
                 )
 
         async with self.get_lock(ctx.author):
             if rarity and slot:
                 msg = await ctx.send(
-                    "Are you sure you want to sell all {rarity} {slot} items in your inventory?".format(
-                        rarity=rarity, slot=slot
-                    )
+                    f"Are you sure you want to sell all {rarity} {slot} items in your inventory?"
                 )
             elif rarity or slot:
                 msg = await ctx.send(
